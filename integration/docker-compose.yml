@@ -1,0 +1,70 @@
+version: "3.9"
+services:
+  backend:
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - TZ=America/New_York
+    build:
+      context: ../backend
+      target: dev
+    volumes:
+      - ../backend/assets:/assets
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
+      - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api"
+      - "traefik.http.routers.api.middlewares=api-stripprefix"
+
+  frontend:
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - TZ=America/New_York
+    build:
+      context: ../frontend
+      target: dev
+    volumes:
+      - ../frontend/assets:/assets
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+
+  database:
+    restart: always
+    volumes:
+      - database_pgdata:/var/lib/postgresql/data
+    env_file:
+      - ../database/.env
+    environment:
+      - TZ=America/New_York
+    build:
+      context: ../database
+      target: dev
+
+  gateway:
+    restart: always
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker --providers.docker.exposedbydefault=false --log
+    ports:
+      # The HTTP (AND S) port
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=America/New_York
+    build:
+      context: ../gateway
+      target: dev
+  
+
+volumes:
+  database_pgdata:
