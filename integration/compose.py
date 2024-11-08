@@ -11,8 +11,12 @@ def setup_typer_app(base_command: str):
     app = typer.Typer(no_args_is_help=True)
 
     @app.command()
-    def start():
+    def build():
         os.system(f"{base_command} build")
+
+
+    @app.command()
+    def start():
         os.system(f"{base_command} up -d --no-recreate")
 
 
