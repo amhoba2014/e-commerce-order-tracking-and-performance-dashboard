@@ -19,7 +19,9 @@ RUN groupmod -g ${GID} node && usermod -u ${UID} -g ${GID} node
 
 # CMD ["bash", "-c", "yarn && yarn dev"]
 
-# HEALTHCHECK --interval=10s --timeout=10s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
+CMD ["bash", "-c", "sleep infinity"]
+
+HEALTHCHECK --interval=10s --timeout=10s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
 
 #
 #
