@@ -79,7 +79,7 @@ def setup_typer_app(base_command: str):
         if name is None:
             typer.echo(f"Please specify a service name to exec into.")
         else:
-            os.system(f"{base_command} exec {name} bash")
+            os.system(f"{base_command} exec {name} bash -li")
 
 
     @app.command()
@@ -95,7 +95,7 @@ def setup_typer_app(base_command: str):
         if name is None:
             typer.echo(f"Please specify a service name to exec into.")
         else:
-            os.system(f"{base_command} exec -u 0 {name} bash")
+            os.system(f"{base_command} exec -u 0 {name} bash -li")
 
 
     @app.command()
