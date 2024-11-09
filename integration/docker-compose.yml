@@ -6,7 +6,7 @@ services:
       database:
         condition: service_healthy
     environment:
-      - TZ=America/New_York
+      - TZ=UTC
     build:
       context: ../backend
       target: dev
@@ -24,7 +24,7 @@ services:
       backend:
         condition: service_healthy
     environment:
-      - TZ=America/New_York
+      - TZ=UTC
     build:
       context: ../frontend
       target: dev
@@ -41,7 +41,7 @@ services:
     env_file:
       - ../database/.env
     environment:
-      - TZ=America/New_York
+      - TZ=UTC
     build:
       context: ../database
       target: dev
@@ -60,7 +60,7 @@ services:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - TZ=America/New_York
+      - TZ=UTC
     build:
       context: ../gateway
       target: dev
