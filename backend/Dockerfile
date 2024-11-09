@@ -11,7 +11,7 @@ RUN useradd -ms /bin/bash python
 # ADD ./requirements.txt /requirements.txt
 # RUN pip install -r /requirements.txt
 
-RUN apt update -y && apt install netcat -y
+RUN apt update -y && apt install netcat-openbsd -y
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
