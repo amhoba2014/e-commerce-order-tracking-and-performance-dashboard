@@ -108,25 +108,16 @@ def setup_typer_app(base_command: str):
             )
         )
     ):
-        # Determine end_part:
-        if name is None:
-            end_part = ""
-        else:
-            end_part = f" {name}"
+        srv = name if name is not None else ""
         # Now use it:
-        container_names = utils.check_output(
-            f"{base_command} " + "ps --format '{{.Name}}'" + end_part).strip().split("\n")
-        service_names = utils.check_output(
-            f"{base_command} " + "ps --format '{{.Service}}'" + end_part).strip().split("\n")
-        service_ports = utils.check_output(
-            f"{base_command} " + "ps --format '{{.Ports}}'" + end_part).strip().split("\n")
+        ips = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'").strip().split("\n")
+        container_names = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{.Name}}'").strip().split("\n")
+        service_names = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{index .Config.Labels \"com.docker.compose.service\"}}'").strip().split("\n")
+        service_ports = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{range .NetworkSettings.Ports}}{{.}}{{end}}'").strip().split("\n")
         # Construct output:
         output = []
         for i, cn in enumerate(container_names):
-            ip = utils.check_output(
-                "docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' " + cn
-            ).strip()
-            output.append(f"{ip}\t\t{service_names[i]}\t\t{service_ports[i]}")
+            output.append(f"{service_names[i]}\t\t{container_names[i]}\t\t{ips[i]}\t\t{service_ports[i]}")
         # Print it:
         print("\n".join(output))
 
