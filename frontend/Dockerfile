@@ -21,7 +21,7 @@ RUN groupmod -g ${GID} node && usermod -u ${UID} -g ${GID} node
 
 CMD ["bash", "-c", "sleep infinity"]
 
-HEALTHCHECK --interval=10s --timeout=10s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
+HEALTHCHECK --interval=1s --timeout=3s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
 
 #
 #
