@@ -11,20 +11,14 @@ RUN useradd -ms /bin/bash python
 # ADD ./requirements.txt /requirements.txt
 # RUN pip install -r /requirements.txt
 
-# RUN apt update -y && apt install netcat -y
+RUN apt update -y && apt install netcat -y
 
-# ENV PYTHONDONTWRITEBYTECODE=1
-# ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# RUN mkdir /avatars
-# RUN chown -R python:python /avatars
-
-# # Setting non-root user as the default, setting the workdir and then its done
-# USER python
-# WORKDIR /app
-# ENV PYTHONPATH=/app/dashboard
-# ENV TZ=UTC
-# EXPOSE 8000
+USER python
+WORKDIR /app
+EXPOSE 8000
 
 CMD ["bash", "-c", "sleep infinity"]
 
