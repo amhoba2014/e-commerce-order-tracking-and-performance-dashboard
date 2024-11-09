@@ -17,7 +17,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 USER python
-WORKDIR /app
+WORKDIR /assets
 EXPOSE 8000
 
 CMD ["bash", "-c", "sleep infinity"]
