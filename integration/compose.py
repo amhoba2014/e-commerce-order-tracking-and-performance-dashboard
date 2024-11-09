@@ -109,17 +109,9 @@ def setup_typer_app(base_command: str):
         )
     ):
         srv = name if name is not None else ""
-        # Now use it:
-        ips = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'").strip().split("\n")
-        container_names = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{.Name}}'").strip().split("\n")
-        service_names = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{index .Config.Labels \"com.docker.compose.service\"}}'").strip().split("\n")
-        service_ports = utils.check_output(f"{base_command} " + "ps -q " + srv + " | xargs docker inspect --format '{{range .NetworkSettings.Ports}}{{.}}{{end}}'").strip().split("\n")
-        # Construct output:
-        output = []
-        for i, cn in enumerate(container_names):
-            output.append(f"{service_names[i]}\t\t{container_names[i]}\t\t{ips[i]}\t\t{service_ports[i]}")
-        # Print it:
-        print("\n".join(output))
+        inspect_format = """{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} ||| {{.Name}} ||| {{index .Config.Labels "com.docker.compose.service"}} ||| {{range .NetworkSettings.Ports}}{{.}}{{end}}"""
+        columnar_result = utils.check_output(f"{base_command} ps -q {srv} | xargs docker inspect --format '{inspect_format}' | column -t -s '|||' ;").strip()
+        print(columnar_result)
 
 
     @app.command()
