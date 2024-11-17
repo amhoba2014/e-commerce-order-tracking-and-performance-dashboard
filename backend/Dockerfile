@@ -11,14 +11,12 @@ USER python
 RUN pipx ensurepath
 RUN pipx install poetry
 
-# # Install dependencies for compiling psycopg2
-# USER root
-# RUN apt update -y && apt install -y libpq-dev
-# RUN apt install -y build-essential gcc
+USER root
+RUN mkdir /assets && chown python:python /assets
 
-# # Install python dependencies
-# ADD ./requirements.txt /requirements.txt
-# RUN pip install -r /requirements.txt
+USER python
+COPY ./assets/pyproject.toml ./assets/poetry.lock /assets/
+RUN bash -li -c "cd /assets && poetry install"
 
 USER python
 ENV PYTHONDONTWRITEBYTECODE=1
