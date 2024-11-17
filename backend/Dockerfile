@@ -23,7 +23,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /assets
 EXPOSE 8000
-CMD ["bash", "-c", "sleep infinity"]
+CMD ["bash", "-li", "-c", "poetry run fastapi dev --host 0.0.0.0 --port 8000 main.py ; sleep infinity"]
 
 HEALTHCHECK --interval=1s --timeout=3s CMD nc -w 1 -z -v 0.0.0.0 8000 || exit 1
 
