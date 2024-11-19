@@ -11,8 +11,10 @@ def setup_typer_app(base_command: str):
     app = typer.Typer(no_args_is_help=True)
 
     @app.command()
-    def build():
-        os.system(f"{base_command} build")
+    def build(
+        plain: bool = typer.Option(False)
+    ):
+        os.system(f"{base_command} build" + (" --progress=plain" if plain else ""))
 
 
     @app.command()

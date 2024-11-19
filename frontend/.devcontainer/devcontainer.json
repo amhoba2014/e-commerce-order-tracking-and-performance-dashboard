@@ -1,0 +1,11 @@
+{
+	"name": "frontend",
+	"image": "ecommerce_order_tracking_dev-frontend:latest",
+  "workspaceMount": "source=${localWorkspaceFolder}/assets,target=/assets,type=bind,consistency=cached",
+  "workspaceFolder": "/assets",
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  }
+}

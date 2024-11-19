@@ -1,25 +1,31 @@
 FROM node:23.1.0-slim AS dev
 
-# Change these UID and GID to your own (so that you wont run into permission problems inside the container) (the way that I've handled this is proportional to my workstation, this should change in the future as we move into the cloud and/or multiple devs wanna work on the UI)
-ARG UID=1000
-ARG GID=1000
+USER root
+RUN apt update -y && apt install netcat-openbsd -y
 
-RUN groupmod -g ${GID} node && usermod -u ${UID} -g ${GID} node
+USER root
+RUN mkdir /assets && chown node:node /assets
 
-# RUN mkdir /node_modules && chown -R ${UID}:${GID} /node_modules ;
+USER node
+COPY --chown=node:node ./assets/package.json ./assets/yarn.lock /assets/
+WORKDIR /assets
+RUN echo 'alias yarn="yarn --modules-folder $HOME/node_modules"' >> ~/.bashrc
+RUN bash -li -c "yarn"
 
-# RUN apt update -y && apt install netcat -y
 
 # USER node
 # WORKDIR /app
 
 # ENV PATH="${PATH}:/node_modules/.bin"
 
-# EXPOSE 3000
 
 # CMD ["bash", "-c", "yarn && yarn dev"]
 
-CMD ["bash", "-c", "sleep infinity"]
+
+
+USER node
+EXPOSE 3000
+CMD ["bash", "-li", "-c", "yarn dev ; sleep infinity"]
 
 HEALTHCHECK --interval=1s --timeout=3s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
 
@@ -39,6 +45,7 @@ FROM dev AS dev-build
 # RUN ls -lah
 
 FROM dev-build AS staging
+# [todo] copy from dev-build. change 'FROM dev-build' to 'FROM dev'
 CMD ["bash", "-c", "yarn start"]
 
 #
