@@ -15,9 +15,11 @@ USER root
 RUN mkdir /assets && chown python:python /assets
 
 USER python
+RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
+
+USER python
 COPY ./assets/pyproject.toml ./assets/poetry.lock /assets/
 RUN bash -li -c "cd /assets && poetry install"
-RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
 
 USER python
 ENV PYTHONDONTWRITEBYTECODE=1
