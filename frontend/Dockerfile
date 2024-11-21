@@ -10,9 +10,8 @@ USER root
 RUN npm install -g pnpm
 
 USER node
-COPY --chown=node:node ./assets/package.json /assets/
+COPY --chown=node:node ./assets/package.json ./assets/pnpm-lock.yaml /assets/
 WORKDIR /assets
-# RUN echo 'alias yarn="yarn --modules-folder $HOME/node_modules"' >> ~/.bashrc
 RUN bash -li -c "pnpm install"
 
 
@@ -28,7 +27,7 @@ RUN bash -li -c "pnpm install"
 
 USER node
 EXPOSE 3000
-CMD ["bash", "-li", "-c", "yarn dev ; sleep infinity"]
+CMD ["bash", "-li", "-c", "pnpm run dev ; sleep infinity"]
 
 HEALTHCHECK --interval=1s --timeout=3s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
 
