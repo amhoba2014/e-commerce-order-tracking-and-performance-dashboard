@@ -30,7 +30,7 @@ RUN bash -li -c "cd ~/ ; pnpm install"
 USER node
 EXPOSE 3000
 WORKDIR /assets
-CMD ["bash", "-li", "-c", "pnpm run dev ; sleep infinity"]
+CMD ["bash", "-li", "-c", "ln -s ~/.pnpm-store .pnpm-store ; ln -s ~/node_modules node_modules ; pnpm run dev ; sleep infinity"]
 
 HEALTHCHECK --interval=1s --timeout=3s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
 
