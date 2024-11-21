@@ -13,6 +13,7 @@ USER node
 COPY --chown=node:node ./assets/package.json ./assets/pnpm-lock.yaml /assets/
 WORKDIR /assets
 RUN bash -li -c "pnpm install"
+RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
 
 
 # USER node
