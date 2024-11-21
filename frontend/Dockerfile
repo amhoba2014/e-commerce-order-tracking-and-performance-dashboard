@@ -6,11 +6,14 @@ RUN apt update -y && apt install netcat-openbsd -y
 USER root
 RUN mkdir /assets && chown node:node /assets
 
+USER root
+RUN npm install -g pnpm
+
 USER node
-COPY --chown=node:node ./assets/package.json ./assets/yarn.lock /assets/
+COPY --chown=node:node ./assets/package.json /assets/
 WORKDIR /assets
-RUN echo 'alias yarn="yarn --modules-folder $HOME/node_modules"' >> ~/.bashrc
-RUN bash -li -c "yarn"
+# RUN echo 'alias yarn="yarn --modules-folder $HOME/node_modules"' >> ~/.bashrc
+RUN bash -li -c "pnpm install"
 
 
 # USER node
