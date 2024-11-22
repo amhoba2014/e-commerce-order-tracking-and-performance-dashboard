@@ -18,7 +18,7 @@ ln -s ~/node_modules node_modules
 
 # Run the development server
 echo "Starting development server..."
-pnpm run dev
+pnpm run dev &
 
 # Keep the script running indefinitely
 echo "Running indefinitely..."
