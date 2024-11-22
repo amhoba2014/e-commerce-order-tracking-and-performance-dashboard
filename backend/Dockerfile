@@ -15,18 +15,15 @@ USER root
 RUN mkdir /assets && chown python:python /assets
 
 USER python
+RUN poetry config virtualenvs.in-project true
 RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
-
-USER python
-COPY ./assets/pyproject.toml ./assets/poetry.lock /assets/
-RUN bash -li -c "cd /assets && poetry install"
 
 USER python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /assets
 EXPOSE 8000
-CMD ["bash", "-li", "-c", "poetry run fastapi dev --host 0.0.0.0 --port 8000 --root-path /api main.py ; sleep infinity"]
+CMD ["bash", "-li", "entrypoint.sh"]
 
 HEALTHCHECK --interval=1s --timeout=3s CMD nc -w 1 -z -v 0.0.0.0 8000 || exit 1
 
