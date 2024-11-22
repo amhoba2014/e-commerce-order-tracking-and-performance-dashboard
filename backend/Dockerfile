@@ -15,7 +15,7 @@ USER root
 RUN mkdir /assets && chown python:python /assets
 
 USER python
-RUN poetry config virtualenvs.in-project true
+RUN bash -li -c "poetry config virtualenvs.in-project true"
 RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
 
 USER python
