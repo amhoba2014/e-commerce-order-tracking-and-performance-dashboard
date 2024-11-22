@@ -12,10 +12,6 @@ RUN npm install -g pnpm
 USER node
 RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
 
-USER node
-COPY --chown=node:node ./assets/package.json ./assets/pnpm-lock.yaml /home/node/
-RUN bash -li -c "cd /home/node ; pnpm i ; mkdir .pnpm-store ;"
-
 
 # USER node
 # WORKDIR /app
