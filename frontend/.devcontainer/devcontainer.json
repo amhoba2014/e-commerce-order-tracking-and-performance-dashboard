@@ -5,7 +5,7 @@
   "workspaceFolder": "/assets",
   "customizations": {
     "vscode": {
-      "extensions": ["clinyong.vscode-css-modules"]
+      "extensions": ["clinyong.vscode-css-modules", "bradlc.vscode-tailwindcss"]
     }
   }
 }
