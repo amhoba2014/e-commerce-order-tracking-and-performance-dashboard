@@ -3,10 +3,12 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --hostname 0.0.0.0 --turbo",
-    "start": "next start"
+    "start": "next start",
+    "generate": "pnpx @hey-api/openapi-ts -i http://backend:8000/openapi.json -o ./sdk -c @hey-api/client-fetch"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.4",
+    "@hey-api/client-fetch": "^0.5.0",
     "@tailwindcss/forms": "^0.5.7",
     "@vercel/postgres": "^0.8.0",
     "autoprefixer": "10.4.19",
@@ -23,6 +25,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.57.1",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "20.14.8",
     "@types/react": "npm:types-react@19.0.0-rc.1",
