@@ -10,7 +10,7 @@ USER root
 RUN npm install -g pnpm
 
 USER root
-RUN apt-get install iputils-ping -y
+RUN apt-get install curl iputils-ping -y
 
 USER node
 RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
