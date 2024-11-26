@@ -9,19 +9,11 @@ RUN mkdir /assets && chown node:node /assets
 USER root
 RUN npm install -g pnpm
 
+USER root
+RUN apt-get install iputils-ping -y
+
 USER node
 RUN echo 'alias l="ls -lh"\nalias ll="ls -alF"' >> ~/.bashrc
-
-
-# USER node
-# WORKDIR /app
-
-# ENV PATH="${PATH}:/node_modules/.bin"
-
-
-# CMD ["bash", "-c", "yarn && yarn dev"]
-
-
 
 USER node
 EXPOSE 3000

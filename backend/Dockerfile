@@ -12,6 +12,9 @@ RUN pipx ensurepath
 RUN pipx install poetry
 
 USER root
+RUN apt-get install iputils-ping -y
+
+USER root
 RUN mkdir /assets && chown python:python /assets
 
 USER python
