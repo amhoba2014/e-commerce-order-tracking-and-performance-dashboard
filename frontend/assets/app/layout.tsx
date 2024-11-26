@@ -1,5 +1,8 @@
-import '@/app/ui/global.css'
-import { inter } from '@/app/ui/fonts'
+import '@/app/global.css'
+import { Inter, Lusitana } from 'next/font/google';
+
+export const inter = Inter({ subsets: ['latin'] });
+export const lusitana = Lusitana({ weight: "400", subsets: ['latin'] })
 
 export default function RootLayout({
   children,
@@ -10,5 +13,5 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
-  );
+  )
 }
