@@ -5,7 +5,11 @@
   "workspaceFolder": "/assets",
   "customizations": {
     "vscode": {
-      "extensions": ["clinyong.vscode-css-modules", "bradlc.vscode-tailwindcss"]
+      "extensions": ["clinyong.vscode-css-modules", "bradlc.vscode-tailwindcss"],
+      "settings": {
+        "editor.tabSize": 2,
+        "editor.detectIndentation": false
+      }
     }
   }
 }
