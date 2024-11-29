@@ -27,6 +27,7 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
         />
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
 
       </head>
       <body className={`${inter.className} antialiased`}>{children}</body>
