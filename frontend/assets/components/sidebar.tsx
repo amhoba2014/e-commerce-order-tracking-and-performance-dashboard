@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { Typography, List, ListItem, ListItemIcon, ListItemText, Divider, ButtonBase } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import DashboardIcon from '@mui/icons-material/Dashboard'
@@ -31,9 +32,6 @@ const SidebarButton = styled(ButtonBase)(({ theme }) => ({
 }))
 
 export default function Sidebar() {
-  const handleNavigation = (path) => {
-    alert(`Navigating to ${path}`) // Replace this with your navigation logic
-  }
 
   return (
     <div style={{
@@ -52,12 +50,14 @@ export default function Sidebar() {
       </Typography>
 
       <List>
-        <ListItem disablePadding>
-          <SidebarButton onClick={() => handleNavigation('/orders')}>
-            <ListItemIcon><DashboardIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-            <ListItemText primary="Orders" />
-          </SidebarButton>
-        </ListItem>
+        <Link href={"/orders"}>
+          <ListItem disablePadding>
+            <SidebarButton>
+              <ListItemIcon><DashboardIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+              <ListItemText primary="Orders" />
+            </SidebarButton>
+          </ListItem>
+        </Link>
 
         {/* <ListItem disablePadding>
           <SidebarButton onClick={() => handleNavigation('/tables')}>
@@ -101,21 +101,21 @@ export default function Sidebar() {
 
       <List>
         <ListItem disablePadding>
-          <SidebarButton onClick={() => handleNavigation('/profile')}>
+          <SidebarButton>
             <ListItemIcon><PersonIcon style={{ color: '#6c757d' }} /></ListItemIcon>
             <ListItemText primary="Profile" />
           </SidebarButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <SidebarButton onClick={() => handleNavigation('/sign-in')}>
+          <SidebarButton>
             <ListItemIcon><LoginIcon style={{ color: '#6c757d' }} /></ListItemIcon>
             <ListItemText primary="Sign In" />
           </SidebarButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <SidebarButton onClick={() => handleNavigation('/sign-up')}>
+          <SidebarButton>
             <ListItemIcon><HowToRegIcon style={{ color: '#6c757d' }} /></ListItemIcon>
             <ListItemText primary="Sign Up" />
           </SidebarButton>
