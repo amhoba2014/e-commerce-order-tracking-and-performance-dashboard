@@ -1,14 +1,14 @@
 'use client';
 
-import * as sdk from '../sdk/sdk.gen'
-import Dashboard from '@/components/dashboard'
-
-sdk.client.setConfig({
-  baseUrl: "/api"
-})
-
 export default function Page() {
   return (
-    <Dashboard></Dashboard>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: "50vh"
+    }}>
+      <h1>Welcome to the (demo) ecommerce performance dashboard.</h1>
+    </div>
   )
 }
