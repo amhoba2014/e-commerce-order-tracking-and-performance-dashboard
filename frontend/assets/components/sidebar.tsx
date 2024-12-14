@@ -1,5 +1,6 @@
 import React from 'react'
-import { Typography, List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material'
+import { Typography, List, ListItem, ListItemIcon, ListItemText, Divider, ButtonBase } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import TableChartIcon from '@mui/icons-material/TableChart'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
@@ -9,7 +10,31 @@ import PersonIcon from '@mui/icons-material/Person'
 import LoginIcon from '@mui/icons-material/Login'
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 
+// Define a styled button with hover effects
+const SidebarButton = styled(ButtonBase)(({ theme }) => ({
+  width: '100%',
+  borderRadius: '8px',
+  padding: '10px 16px',
+  textAlign: 'left',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  color: '#6c757d',
+  textTransform: 'none',
+  fontWeight: 400,
+  transition: 'box-shadow 0.3s ease, background-color 0.3s ease',
+  '&:hover': {
+    backgroundColor: '#e9ecef',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
+    color: '#495057'
+  }
+}))
+
 export default function Sidebar() {
+  const handleNavigation = (path) => {
+    alert(`Navigating to ${path}`) // Replace this with your navigation logic
+  }
+
   return (
     <div style={{
       width: '250px',
@@ -23,34 +48,44 @@ export default function Sidebar() {
         fontWeight: 'bold',
         color: '#343a40'
       }}>
-        Argon Dashboard 2 PRO
+        ECommerce Dashboard
       </Typography>
 
       <List>
-        <ListItem component="div" style={{ borderRadius: '8px', backgroundColor: '#e9ecef' }}>
-          <ListItemIcon><DashboardIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="Dashboard" />
+        <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/orders')}>
+            <ListItemIcon><DashboardIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="Orders" />
+          </SidebarButton>
         </ListItem>
 
-        <ListItem component="div" style={{ borderRadius: '8px' }}>
-          <ListItemIcon><TableChartIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="Tables" />
+        {/* <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/tables')}>
+            <ListItemIcon><TableChartIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="Tables" />
+          </SidebarButton>
         </ListItem>
 
-        <ListItem component="div" style={{ borderRadius: '8px' }}>
-          <ListItemIcon><CreditCardIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="Billing" />
+        <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/billing')}>
+            <ListItemIcon><CreditCardIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="Billing" />
+          </SidebarButton>
         </ListItem>
 
-        <ListItem component="div" style={{ borderRadius: '8px' }}>
-          <ListItemIcon><ViewInArIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="Virtual Reality" />
+        <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/virtual-reality')}>
+            <ListItemIcon><ViewInArIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="Virtual Reality" />
+          </SidebarButton>
         </ListItem>
 
-        <ListItem component="div" style={{ borderRadius: '8px' }}>
-          <ListItemIcon><LanguageIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="RTL" />
-        </ListItem>
+        <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/rtl')}>
+            <ListItemIcon><LanguageIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="RTL" />
+          </SidebarButton>
+        </ListItem> */}
       </List>
 
       <Divider style={{ margin: '16px 0' }} />
@@ -65,19 +100,25 @@ export default function Sidebar() {
       </Typography>
 
       <List>
-        <ListItem component="div" style={{ borderRadius: '8px' }}>
-          <ListItemIcon><PersonIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="Profile" />
+        <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/profile')}>
+            <ListItemIcon><PersonIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="Profile" />
+          </SidebarButton>
         </ListItem>
 
-        <ListItem component="div" style={{ borderRadius: '8px' }}>
-          <ListItemIcon><LoginIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="Sign In" />
+        <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/sign-in')}>
+            <ListItemIcon><LoginIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="Sign In" />
+          </SidebarButton>
         </ListItem>
 
-        <ListItem component="div" style={{ borderRadius: '8px' }}>
-          <ListItemIcon><HowToRegIcon style={{ color: '#6c757d' }} /></ListItemIcon>
-          <ListItemText primary="Sign Up" />
+        <ListItem disablePadding>
+          <SidebarButton onClick={() => handleNavigation('/sign-up')}>
+            <ListItemIcon><HowToRegIcon style={{ color: '#6c757d' }} /></ListItemIcon>
+            <ListItemText primary="Sign Up" />
+          </SidebarButton>
         </ListItem>
       </List>
     </div>
