@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip } from '@mui/material';
 
 export default function Page() {
   // Sample data for the orders
@@ -44,6 +44,20 @@ export default function Page() {
     },
   ];
 
+  // Function to map status to badge color
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case 'Pending':
+        return 'warning'; // yellow badge
+      case 'Shipped':
+        return 'info'; // blue badge
+      case 'Delivered':
+        return 'success'; // green badge
+      default:
+        return 'default'; // gray badge
+    }
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <TableContainer component={Paper}>
@@ -65,7 +79,13 @@ export default function Page() {
               <TableRow key={order.orderId}>
                 <TableCell>{order.orderId}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
-                <TableCell>{order.status}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={order.status}
+                    color={getStatusBadgeColor(order.status)}
+                    size="small"
+                  />
+                </TableCell>
                 <TableCell>{order.timestamp}</TableCell>
                 <TableCell>{order.amount}</TableCell>
                 <TableCell>{order.paymentStatus}</TableCell>
