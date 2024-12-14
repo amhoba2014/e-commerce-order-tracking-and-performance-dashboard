@@ -10,36 +10,36 @@ export default function Page() {
       orderId: 'ORD001',
       customerName: 'John Doe',
       status: 'Pending',
+      paymentStatus: 'Paid',
       timestamp: '2024-12-14 10:30',
       amount: '$200.00',
-      paymentStatus: 'Paid',
       shippingAddress: '1234 Elm St, Springfield, IL',
     },
     {
       orderId: 'ORD002',
       customerName: 'Jane Smith',
       status: 'Shipped',
+      paymentStatus: 'Pending',
       timestamp: '2024-12-13 15:45',
       amount: '$150.00',
-      paymentStatus: 'Pending',
       shippingAddress: '5678 Oak Ave, Chicago, IL',
     },
     {
       orderId: 'ORD003',
       customerName: 'Sam Wilson',
       status: 'Delivered',
+      paymentStatus: 'Paid',
       timestamp: '2024-12-12 12:00',
       amount: '$80.00',
-      paymentStatus: 'Paid',
       shippingAddress: '9876 Pine Dr, Miami, FL',
     },
     {
       orderId: 'ORD004',
       customerName: 'Chris Lee',
       status: 'Pending',
+      paymentStatus: 'Failed',
       timestamp: '2024-12-11 08:20',
       amount: '$220.00',
-      paymentStatus: 'Pending',
       shippingAddress: '6543 Maple Blvd, Houston, TX',
     },
   ];
@@ -53,6 +53,20 @@ export default function Page() {
         return 'info'; // blue badge
       case 'Delivered':
         return 'success'; // green badge
+      default:
+        return 'default'; // gray badge
+    }
+  };
+
+  // Function to map payment status to badge color
+  const getPaymentStatusBadgeColor = (paymentStatus) => {
+    switch (paymentStatus) {
+      case 'Paid':
+        return 'success'; // green badge
+      case 'Pending':
+        return 'warning'; // yellow badge
+      case 'Failed':
+        return 'error'; // red badge
       default:
         return 'default'; // gray badge
     }
@@ -88,7 +102,13 @@ export default function Page() {
                 </TableCell>
                 <TableCell>{order.timestamp}</TableCell>
                 <TableCell>{order.amount}</TableCell>
-                <TableCell>{order.paymentStatus}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={order.paymentStatus}
+                    color={getPaymentStatusBadgeColor(order.paymentStatus)}
+                    size="small"
+                  />
+                </TableCell>
                 <TableCell>{order.shippingAddress}</TableCell>
                 <TableCell>
                   <Button variant="contained" color="primary">

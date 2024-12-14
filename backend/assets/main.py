@@ -1,7 +1,10 @@
 from typing import Union
-from fastapi import FastAPI
-
+from fastapi import FastAPI, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from source.models import Hero
+from source.models import Order
+from source.database import get_db
 
 
 app = FastAPI()
@@ -18,3 +21,12 @@ async def read_root():
 @app.get("/items/{item_id}")
 async def read_item(item_id: int, q: Union[str, None] = None):
   return {"item_id": item_id, "q": q}
+
+
+# Endpoint to get all orders
+@app.get("/orders/", response_model=list[Order])
+async def read_orders(db: AsyncSession = Depends(get_db)):
+  # Select all orders from the database
+  result = await db.execute(select(Order))
+  orders = result.scalars().all()  # Get all orders from the result
+  return orders
