@@ -45,6 +45,9 @@ services:
     build:
       context: ../database
       target: dev
+    ports:
+      # For dev only
+      - "5432:5432"
 
   gateway:
     restart: always

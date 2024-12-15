@@ -1,10 +1,18 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlmodel import SQLModel
 
-DATABASE_URL: str = "postgresql+asyncpg://user:password@localhost:5432/mydatabase"
+from source.models import *
+
+DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@database:5432/postgres"
 
 # Create the database engine
 engine = create_async_engine(DATABASE_URL, echo=True)
+
+
+async def create_db_and_tables():
+  async with engine.begin() as conn:
+    await conn.run_sync(SQLModel.metadata.create_all)
 
 # Create an async session factory
 async_session = sessionmaker(
@@ -17,7 +25,6 @@ async_session = sessionmaker(
 Base = declarative_base()
 
 
-# Dependency for FastAPI routes
 async def get_db():
   async with async_session() as session:
     yield session

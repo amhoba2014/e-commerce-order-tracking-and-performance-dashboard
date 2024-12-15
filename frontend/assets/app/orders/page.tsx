@@ -1,5 +1,11 @@
 'use client';
 
+import * as sdk from '@/sdk/sdk.gen'
+
+sdk.client.setConfig({
+  baseUrl: "/api"
+})
+
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip } from '@mui/material';
 
@@ -111,7 +117,7 @@ export default function Page() {
                 </TableCell>
                 <TableCell>{order.shippingAddress}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="primary">
+                  <Button variant="contained" color="primary" onClick={async () => { console.log( await sdk.readOrdersOrdersGet()) }}> 
                     View Details
                   </Button>
                 </TableCell>
