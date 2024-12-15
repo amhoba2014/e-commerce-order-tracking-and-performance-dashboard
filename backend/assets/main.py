@@ -5,11 +5,17 @@ from sqlalchemy.future import select
 from faker import Faker
 import random
 from datetime import datetime
-from source.models import Hero, Order
+from source.models import Order
 from source.database import create_db_and_tables, get_db
 from source.enums import OrderStatus, PaymentStatus
+from source.openapi import make_custom_openapi
+
+
 
 app = FastAPI()
+
+# Apply the custom OpenAPI schema
+app.openapi = make_custom_openapi(app)
 
 faker = Faker()  # Initialize the Faker instance
 
