@@ -4,6 +4,20 @@ export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
 
+export type Order = {
+    orderId: string;
+    customerName: string;
+    status: OrderStatus;
+    timestamp: string;
+    amount: number;
+    paymentStatus: PaymentStatus;
+    shippingAddress: string;
+};
+
+export type OrderStatus = 'Pending' | 'Shipped' | 'Delivered' | 'Default';
+
+export type PaymentStatus = 'Paid' | 'Pending' | 'Failed' | 'Default';
+
 export type ValidationError = {
     loc: Array<(string | number)>;
     msg: string;
@@ -26,3 +40,7 @@ export type ReadItemItemsItemIdGetData = {
 export type ReadItemItemsItemIdGetResponse = (unknown);
 
 export type ReadItemItemsItemIdGetError = (HTTPValidationError);
+
+export type ReadOrdersOrdersGetResponse = (Array<Order>);
+
+export type ReadOrdersOrdersGetError = unknown;
