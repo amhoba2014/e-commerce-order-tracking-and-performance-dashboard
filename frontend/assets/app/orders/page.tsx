@@ -1,54 +1,28 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip } from '@mui/material';
 import * as sdk from '@/sdk/sdk.gen'
+import { Order } from '@/sdk/types.gen'
 
 sdk.client.setConfig({
   baseUrl: "/api"
 })
 
-import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip } from '@mui/material';
-
 export default function Page() {
-  // Sample data for the orders
-  const orders = [
-    {
-      orderId: 'ORD001',
-      customerName: 'John Doe',
-      status: 'Pending',
-      paymentStatus: 'Paid',
-      timestamp: '2024-12-14 10:30',
-      amount: '$200.00',
-      shippingAddress: '1234 Elm St, Springfield, IL',
-    },
-    {
-      orderId: 'ORD002',
-      customerName: 'Jane Smith',
-      status: 'Shipped',
-      paymentStatus: 'Pending',
-      timestamp: '2024-12-13 15:45',
-      amount: '$150.00',
-      shippingAddress: '5678 Oak Ave, Chicago, IL',
-    },
-    {
-      orderId: 'ORD003',
-      customerName: 'Sam Wilson',
-      status: 'Delivered',
-      paymentStatus: 'Paid',
-      timestamp: '2024-12-12 12:00',
-      amount: '$80.00',
-      shippingAddress: '9876 Pine Dr, Miami, FL',
-    },
-    {
-      orderId: 'ORD004',
-      customerName: 'Chris Lee',
-      status: 'Pending',
-      paymentStatus: 'Failed',
-      timestamp: '2024-12-11 08:20',
-      amount: '$220.00',
-      shippingAddress: '6543 Maple Blvd, Houston, TX',
-    },
-  ];
+
+  const [orders, setOrders] = useState<Order[]>([])
+
+  // Hook to call the function every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const response = await sdk.defaultReadOrders()
+      setOrders(response.data ?? [])
+    }, 2000) // Runs every 2 seconds
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(interval)
+  }, [])
 
   // Function to map status to badge color
   const getStatusBadgeColor = (status) => {
@@ -117,7 +91,7 @@ export default function Page() {
                 </TableCell>
                 <TableCell>{order.shippingAddress}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="primary" onClick={async () => { console.log( await sdk.readOrdersOrdersGet()) }}> 
+                  <Button variant="contained" color="primary">
                     View Details
                   </Button>
                 </TableCell>
