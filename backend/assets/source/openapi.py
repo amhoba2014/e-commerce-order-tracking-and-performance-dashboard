@@ -12,16 +12,19 @@ def make_custom_openapi(app):
     if app.openapi_schema:
       return app.openapi_schema
     openapi_schema = get_openapi(
-        title="My API",
-        version="1.0.0",
-        description="Custom OpenAPI schema with consistent operation IDs",
+        title=app.title,
+        version=app.version,
+        description=app.description,
         routes=app.routes,
     )
+
+    # Preserve the original servers configuration
+    if app.servers:
+      openapi_schema["servers"] = app.servers
 
     # Loop through all paths and update operation IDs
     for path, methods in openapi_schema["paths"].items():
       for method, endpoint in methods.items():
-        # Use the first tag or "default"
         tags = endpoint.get("tags", ["default"])
         summary = endpoint.get("summary", "default_summary")
         endpoint["operationId"] = generate_operation_id(tags[0], summary)

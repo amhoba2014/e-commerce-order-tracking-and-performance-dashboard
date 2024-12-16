@@ -1,28 +1,32 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip } from '@mui/material';
-import * as sdk from '@/sdk/sdk.gen'
-import { Order } from '@/sdk/types.gen'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip, CircularProgress } from '@mui/material';
+import * as sdk from '@/sdk/sdk.gen';
+import { Order } from '@/sdk/types.gen';
 
 sdk.client.setConfig({
   baseUrl: "/api"
-})
+});
 
 export default function Page() {
+  const [orders, setOrders] = useState<Order[] | null>(null);
 
-  const [orders, setOrders] = useState<Order[]>([])
-
-  // Hook to call the function every 2 seconds
+  // Hook to fetch orders every 2 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
-      const response = await sdk.defaultReadOrders()
-      setOrders(response.data ?? [])
-    }, 2000) // Runs every 2 seconds
+      try {
+        const response = await sdk.defaultReadOrders();
+        setOrders(response.data ?? []);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        setOrders([]); // Default to an empty array if fetch fails
+      }
+    }, 2000);
 
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(interval)
-  }, [])
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, []);
 
   // Function to map status to badge color
   const getStatusBadgeColor = (status) => {
@@ -69,34 +73,45 @@ export default function Page() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.orderId}>
-                <TableCell>{order.orderId}</TableCell>
-                <TableCell>{order.customerName}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={order.status}
-                    color={getStatusBadgeColor(order.status)}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell>{order.timestamp}</TableCell>
-                <TableCell>{order.amount}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={order.paymentStatus}
-                    color={getPaymentStatusBadgeColor(order.paymentStatus)}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell>{order.shippingAddress}</TableCell>
-                <TableCell>
-                  <Button variant="contained" color="primary">
-                    View Details
-                  </Button>
+            {/* Show loading state if orders is null */}
+            {orders === null ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  <CircularProgress />
+                  <div>Loading Orders...</div>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              // Render orders once data is available
+              orders.map((order) => (
+                <TableRow key={order.orderId}>
+                  <TableCell>{order.orderId}</TableCell>
+                  <TableCell>{order.customerName}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={order.status}
+                      color={getStatusBadgeColor(order.status)}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>{order.timestamp}</TableCell>
+                  <TableCell>{order.amount}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={order.paymentStatus}
+                      color={getPaymentStatusBadgeColor(order.paymentStatus)}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>{order.shippingAddress}</TableCell>
+                  <TableCell>
+                    <Button variant="contained" color="primary">
+                      View Details
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
