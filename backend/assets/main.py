@@ -37,7 +37,7 @@ async def read_orders(db: AsyncSession = Depends(get_db)):
 @app.post("/orders/random", response_model=Order)
 async def add_random_order(db: AsyncSession = Depends(get_db)):
   random_order = Order(
-      orderId=f"ORD{random.randint(1000, 9999)}",
+      orderId=f"ORD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
       customerName=faker.name(),
       status=random.choice(list(OrderStatus)),
       timestamp=datetime.now(),
@@ -46,7 +46,7 @@ async def add_random_order(db: AsyncSession = Depends(get_db)):
       shippingAddress=faker.address().replace("\n", ", "),
   )
 
-  logger.info("Order is added:", random_order.model_dump_json())
+  logger.info(f"Order is added: {random_order.model_dump_json()}")
 
   db.add(random_order)
   await db.commit()
