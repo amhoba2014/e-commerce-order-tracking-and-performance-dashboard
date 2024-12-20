@@ -7,6 +7,7 @@ async def spin_up_fakers():
 
 
 async def create_random_orders():
+  return
   async with httpx.AsyncClient() as client:
     while True:
       try:
