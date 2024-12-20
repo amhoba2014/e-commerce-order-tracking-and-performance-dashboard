@@ -12,6 +12,7 @@ fastapi = {extras = ["standard"], version = "^0.115.5"}
 sqlmodel = "^0.0.22"
 asyncpg = "^0.30.0"
 faker = "^33.1.0"
+loguru = "^0.7.3"
 
 
 [build-system]

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from faker import Faker
 import random
+from loguru import logger
 from datetime import datetime
 from source.makefake import spin_up_fakers
 from source.models import Order
@@ -44,6 +45,8 @@ async def add_random_order(db: AsyncSession = Depends(get_db)):
       paymentStatus=random.choice(list(PaymentStatus)),
       shippingAddress=faker.address().replace("\n", ", "),
   )
+
+  logger.info("Order is added:", random_order.model_dump_json())
 
   db.add(random_order)
   await db.commit()
