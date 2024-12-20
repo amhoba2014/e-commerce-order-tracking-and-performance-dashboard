@@ -18,6 +18,11 @@ def setup_typer_app(base_command: str):
 
 
     @app.command()
+    def setup():
+        os.system(f"{base_command} up setup")
+
+
+    @app.command()
     def start():
         os.system(f"{base_command} up -d --no-recreate")
 
