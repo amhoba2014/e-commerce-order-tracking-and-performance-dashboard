@@ -118,7 +118,7 @@ services:
       driver: gelf
       options:
         gelf-address: "udp://127.0.0.1:50000"
-        tag: "nginx"
+        tag: "backend"
 
   frontend:
     restart: always
