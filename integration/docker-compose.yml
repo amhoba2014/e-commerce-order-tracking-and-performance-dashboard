@@ -135,6 +135,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:50000"
+        tag: "frontend"
 
   database:
     restart: always
