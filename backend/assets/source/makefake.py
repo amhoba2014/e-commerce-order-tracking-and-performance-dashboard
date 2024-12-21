@@ -7,11 +7,10 @@ async def spin_up_fakers():
 
 
 async def create_random_orders():
-  return
   async with httpx.AsyncClient() as client:
     while True:
       try:
         response = await client.post("http://localhost:8000/orders/random")
       except Exception as e:
         logger.error(f"Error creating random order: {e}")
-      await asyncio.sleep(2)
+      await asyncio.sleep(10)
