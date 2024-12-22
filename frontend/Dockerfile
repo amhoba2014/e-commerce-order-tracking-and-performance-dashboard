@@ -20,7 +20,7 @@ EXPOSE 3000
 WORKDIR /assets
 CMD ["bash", "-li", "entrypoint.sh"]
 
-HEALTHCHECK --interval=1s --timeout=3s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
+HEALTHCHECK --interval=10s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
 
 #
 #
