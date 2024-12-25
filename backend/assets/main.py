@@ -44,21 +44,18 @@ async def add_random_order(db: AsyncSession = Depends(get_db)):
   result = await db.execute(select(Product))
   products = result.scalars().all()
   if not products:
-    logger.info("No products available to create orders.")
-    return
+    raise Exception("No products available to create orders.")
 
   result = await db.execute(select(Customer))
   customers = result.scalars().all()
   if not customers:
-    logger.info("No customers available to create orders.")
-    return
+    raise Exception("No customers available to create orders.")
 
   random_product = random.choice(products)
   random_customer = random.choice(customers)
 
   if random_product.quantity < 1:
-    logger.info(f"Product {random_product.name} is out of stock.")
-    return
+    raise Exception(f"Product {random_product.name} is out of stock.")
 
   random_order = Order(
       orderId=f"ORD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
@@ -124,8 +121,7 @@ async def restock_products(db: AsyncSession = Depends(get_db)):
   products = result.scalars().all()
 
   if not products:
-    logger.info("No products available to restock.")
-    return
+    raise Exception("No products available to restock.")
 
   restocked_products = []
 
@@ -151,8 +147,7 @@ async def update_random_order_status(db: AsyncSession = Depends(get_db)):
   orders = result.scalars().all()
 
   if not orders:
-    logger.info("No orders available to update.")
-    return
+    raise Exception("No orders available to update.")
 
   # Select a random order
   random_order = random.choice(orders)
