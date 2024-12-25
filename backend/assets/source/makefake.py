@@ -13,6 +13,7 @@ async def spin_up_fakers():
   asyncio.create_task(create_random_products())
   asyncio.create_task(restock_random_products())
   asyncio.create_task(update_order_statuses())
+  asyncio.create_task(update_order_payment_status())
 
 
 async def create_random_orders():
@@ -68,3 +69,15 @@ async def update_order_statuses():
       except Exception as e:
         logger.error(f"Error updating order statuses: {e}")
       await asyncio.sleep(random.randint(120, 240))
+
+
+async def update_order_payment_status():
+  async with httpx.AsyncClient() as client:
+    while True:
+      try:
+        response = await client.post("http://localhost:8000/orders/update_payment_status")
+        logger.info(f"Payment status update response: {response.json()}")
+      except Exception as e:
+        logger.error(f"Error updating payment status: {e}")
+      # Check and update payment statuses every 30 seconds
+      await asyncio.sleep(30)

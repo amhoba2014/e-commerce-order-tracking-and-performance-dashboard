@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 from faker import Faker
 import random
 from loguru import logger
-from datetime import datetime
+from datetime import datetime, timezone
 from source.makefake import spin_up_fakers
 from source.models import Order, Customer, Product
 from source.database import create_db_and_tables, get_db
@@ -166,3 +166,26 @@ async def update_random_order_status(db: AsyncSession = Depends(get_db)):
   await db.refresh(random_order)
 
   return {"message": f"Order ID {random_order.orderId} status updated to {random_order.status}"}
+
+
+@app.post("/orders/update_payment_status")
+async def update_payment_status(db: AsyncSession = Depends(get_db)):
+    # Fetch all orders with PaymentStatus.Pending
+  result = await db.execute(select(Order).where(Order.paymentStatus == PaymentStatus.Pending))
+  pending_orders = result.scalars().all()
+
+  if not pending_orders:
+    logger.info("No pending orders found.")
+    return {"message": "No pending orders to update."}
+
+  # Randomly select one order from the pending orders
+  order = random.choice(pending_orders)
+
+  # Randomly set to Paid or Failed
+  order.paymentStatus = random.choice(
+      [PaymentStatus.Paid, PaymentStatus.Failed])
+  order.updated = datetime.now(timezone.utc)
+  logger.info(f"Payment status updated: {order.model_dump_json()}")
+
+  await db.commit()
+  return {"message": f"Payment status updated for order: {order.orderId}"}
