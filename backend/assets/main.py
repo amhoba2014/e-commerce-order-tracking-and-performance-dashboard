@@ -27,6 +27,11 @@ async def on_startup():
   await spin_up_fakers()
 
 
+@app.get("/health")
+async def health_check():
+  return {"status": "healthy"}
+
+
 @app.get("/orders/", response_model=List[Order])
 async def read_orders(db: AsyncSession = Depends(get_db)):
   result = await db.execute(select(Order))

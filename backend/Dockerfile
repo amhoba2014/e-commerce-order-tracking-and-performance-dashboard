@@ -28,7 +28,7 @@ WORKDIR /assets
 EXPOSE 8000
 CMD ["bash", "-li", "entrypoint.sh"]
 
-HEALTHCHECK --interval=10s CMD nc -w 1 -z -v 0.0.0.0 8000 || exit 1
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 CMD curl --fail http://localhost:8000/health || exit 1
 
 #
 #
