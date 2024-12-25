@@ -134,7 +134,8 @@ async def restock_products(db: AsyncSession = Depends(get_db)):
   products = result.scalars().all()
 
   if not products:
-    raise Exception("No products available to restock.")
+    raise HTTPException(
+        status_code=404, detail="No products available to restock.")
 
   restocked_products = []
 
@@ -160,7 +161,8 @@ async def update_random_order_status(db: AsyncSession = Depends(get_db)):
   orders = result.scalars().all()
 
   if not orders:
-    raise Exception("No orders available to update.")
+    raise HTTPException(
+        status_code=404, detail="No orders available to update.")
 
   # Select a random order
   random_order = random.choice(orders)
@@ -176,8 +178,9 @@ async def update_random_order_status(db: AsyncSession = Depends(get_db)):
       logger.info(
           f"Order status is already at the final state: {random_order.status}")
   except ValueError:
-    raise Exception(
-        f"Invalid order status for order ID {random_order.orderId}")
+    raise HTTPException(
+        status_code=500,
+        detail=f"Invalid order status for order ID {random_order.orderId}")
 
   # Update the database
   await db.commit()
