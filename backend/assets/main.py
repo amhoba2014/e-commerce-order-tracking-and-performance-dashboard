@@ -1,6 +1,6 @@
 import asyncio
 from typing import List
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from faker import Faker
@@ -41,22 +41,33 @@ async def read_orders(db: AsyncSession = Depends(get_db)):
 
 @app.post("/orders/random", response_model=Order)
 async def add_random_order(db: AsyncSession = Depends(get_db)):
+  # Check if products exist
   result = await db.execute(select(Product))
   products = result.scalars().all()
   if not products:
-    raise Exception("No products available to create orders.")
+    raise HTTPException(
+        status_code=404, detail="No products available to create orders."
+    )
 
+  # Check if customers exist
   result = await db.execute(select(Customer))
   customers = result.scalars().all()
   if not customers:
-    raise Exception("No customers available to create orders.")
+    raise HTTPException(
+        status_code=404, detail="No customers available to create orders."
+    )
 
+  # Select random product and customer
   random_product = random.choice(products)
   random_customer = random.choice(customers)
 
+  # Check product stock
   if random_product.quantity < 1:
-    raise Exception(f"Product {random_product.name} is out of stock.")
+    raise HTTPException(
+        status_code=400, detail=f"Product {random_product.name} is out of stock."
+    )
 
+  # Create the order
   random_order = Order(
       orderId=f"ORD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
       productId=random_product.productId,
@@ -66,10 +77,12 @@ async def add_random_order(db: AsyncSession = Depends(get_db)):
       paymentStatus=PaymentStatus.Pending,
   )
 
+  # Deduct product quantity
   random_product.quantity -= 1
 
   logger.info(f"Order created: {random_order.model_dump_json()}")
 
+  # Commit changes to the database
   db.add(random_order)
   await db.commit()
   await db.refresh(random_order)
