@@ -17,7 +17,8 @@ class Order(SQLModel, table=True):
       sa_column=Column(DateTime(timezone=True), server_default=func.now())
   )
   updated: Optional[datetime] = Field(
-      sa_column=Column(DateTime(timezone=True), server_default=func.now())
+      sa_column=Column(DateTime(timezone=True),
+                       server_default=func.now(), onupdate=func.now())
   )
   deleted: bool = False
 
@@ -32,7 +33,8 @@ class Customer(SQLModel, table=True):
       sa_column=Column(DateTime(timezone=True), server_default=func.now())
   )
   updated: Optional[datetime] = Field(
-      sa_column=Column(DateTime(timezone=True), server_default=func.now())
+      sa_column=Column(DateTime(timezone=True),
+                       server_default=func.now(), onupdate=func.now())
   )
   deleted: bool = False
 
@@ -47,6 +49,7 @@ class Product(SQLModel, table=True):
       sa_column=Column(DateTime(timezone=True), server_default=func.now())
   )
   updated: Optional[datetime] = Field(
-      sa_column=Column(DateTime(timezone=True), server_default=func.now())
+      sa_column=Column(DateTime(timezone=True),
+                       server_default=func.now(), onupdate=func.now())
   )
   deleted: bool = False
