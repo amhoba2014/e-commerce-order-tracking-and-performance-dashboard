@@ -9,6 +9,8 @@ sdk.client.setConfig({
   baseUrl: "/api"
 });
 
+const page_size = 5
+
 export default function CustomersPage() {
   const [customers, setCustomers] = useState<PaginatedCustomersResponse | null>(null);
   const [page, setPage] = useState(1); // Track the current page
@@ -18,11 +20,11 @@ export default function CustomersPage() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await sdk.defaultReadCustomers({ query: { page, size: 10 } });
+        const response = await sdk.defaultReadCustomers({ query: { page, size: page_size } });
         setCustomers(response.data ?? null);
 
         // Set the total number of pages based on the total count returned from the backend
-        setTotalPages(Math.ceil(response.data?.total ?? 10 / 10)); // Assuming the backend returns total count
+        setTotalPages(response.data ? Math.ceil(response.data.total / page_size) : 1); // Assuming the backend returns total count
       } catch (error) {
         console.error('Error fetching customers:', error);
         setCustomers(null); // Default to an empty array if fetch fails
@@ -82,7 +84,7 @@ export default function CustomersPage() {
       {/* Pagination Controls */}
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <Pagination
-          count={totalPages}
+          count={Math.ceil(totalPages / page_size)}
           page={page}
           onChange={handlePageChange}
           color="primary"

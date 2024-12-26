@@ -9,6 +9,8 @@ sdk.client.setConfig({
   baseUrl: "/api"
 });
 
+const page_size = 5
+
 export default function Page() {
   const [orders, setOrders] = useState<PaginatedOrdersResponse | null>(null);
   const [page, setPage] = useState(1); // Track the current page
@@ -18,11 +20,11 @@ export default function Page() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await sdk.defaultReadOrders({ query: { page, size: 10 } });
+        const response = await sdk.defaultReadOrders({ query: { page, size: page_size } });
         setOrders(response.data ?? null);
 
         // Set the total number of pages based on the total count returned from the backend
-        setTotalPages(Math.ceil(response.data?.total ?? 10 / 10)); // Assuming the backend returns total count
+        setTotalPages(response.data ? Math.ceil(response.data.total / page_size) : 1); // Assuming the backend returns total count
       } catch (error) {
         console.error('Error fetching orders:', error);
         setOrders(null); // Default to an empty array if fetch fails
@@ -128,7 +130,7 @@ export default function Page() {
       {/* Pagination Controls */}
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <Pagination
-          count={Math.ceil(totalPages / 10)}
+          count={Math.ceil(totalPages / page_size)}
           page={page}
           onChange={handlePageChange}
           color="primary"
