@@ -49,8 +49,9 @@ async def read_orders(
   total_count_result = await db.execute(select(func.count(Order.id)))
   total_count = total_count_result.scalar()
 
-  # Query to get the paginated orders
-  orders_query = select(Order).offset(offset).limit(limit)
+  # Query to get the paginated orders, ordered by created date
+  orders_query = select(Order).order_by(
+      Order.created.asc()).offset(offset).limit(limit)
   result = await db.execute(orders_query)
   orders = result.scalars().all()
 
@@ -76,8 +77,9 @@ async def read_products(
   total_count_result = await db.execute(select(func.count(Product.id)))
   total_count = total_count_result.scalar()
 
-  # Query to get the paginated products
-  products_query = select(Product).offset(offset).limit(limit)
+  # Query to get the paginated products, ordered by created date
+  products_query = select(Product).order_by(
+      Product.created.asc()).offset(offset).limit(limit)
   result = await db.execute(products_query)
   products = result.scalars().all()
 
@@ -103,8 +105,9 @@ async def read_customers(
   total_count_result = await db.execute(select(func.count(Customer.id)))
   total_count = total_count_result.scalar()
 
-  # Query to get the paginated customers
-  customers_query = select(Customer).offset(offset).limit(limit)
+  # Query to get the paginated customers, ordered by created date
+  customers_query = select(Customer).order_by(
+      Customer.created.asc()).offset(offset).limit(limit)
   result = await db.execute(customers_query)
   customers = result.scalars().all()
 
