@@ -86,7 +86,7 @@ export default function ProductsPage() {
       {/* Pagination Controls */}
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <Pagination
-          count={Math.ceil(totalPages / page_size)}
+          count={totalPages}
           page={page}
           onChange={handlePageChange}
           color="primary"
