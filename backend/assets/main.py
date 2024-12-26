@@ -111,12 +111,61 @@ async def add_random_customer(db: AsyncSession = Depends(get_db)):
 
 @app.post("/products/random", response_model=Product)
 async def add_random_product(db: AsyncSession = Depends(get_db)):
+  # Lists for generating meaningful product names and descriptions
+  categories = [
+      "Electronics", "Home & Kitchen", "Sports & Outdoors", "Books", "Toys & Games",
+      "Beauty & Personal Care", "Clothing & Accessories", "Automotive", "Pet Supplies",
+      "Office Products", "Garden & Outdoor", "Health & Wellness", "Food & Grocery",
+      "Music & Instruments", "Art & Craft Supplies"
+  ]
+  adjectives = [
+      "Premium", "Deluxe", "Smart", "Eco-friendly", "Portable", "Wireless", "Ergonomic",
+      "Innovative", "Compact", "Multifunctional", "Durable", "Sleek", "High-performance",
+      "Customizable", "Luxurious", "Efficient", "Versatile", "Cutting-edge", "Stylish",
+      "Professional-grade", "User-friendly", "Advanced", "Lightweight", "Heavy-duty",
+      "Energy-saving", "All-in-one", "Adjustable", "Foldable", "Rechargeable", "Waterproof"
+  ]
+  products = {
+      "Electronics": ["Smartphone", "Laptop", "Headphones", "Smartwatch", "Tablet", "E-reader", "Bluetooth Speaker", "Drone", "Gaming Console", "Digital Camera"],
+      "Home & Kitchen": ["Coffee Maker", "Blender", "Air Fryer", "Robot Vacuum", "Toaster Oven", "Instant Pot", "Juicer", "Stand Mixer", "Food Processor", "Electric Kettle"],
+      "Sports & Outdoors": ["Yoga Mat", "Dumbbells", "Hiking Backpack", "Tennis Racket", "Camping Tent", "Fitness Tracker", "Bicycle", "Kayak", "Snowboard", "Golf Clubs"],
+      "Books": ["Novel", "Cookbook", "Self-help Book", "Biography", "Science Fiction", "History Book", "Poetry Collection", "Graphic Novel", "Travel Guide", "Academic Textbook"],
+      "Toys & Games": ["Board Game", "LEGO Set", "Remote Control Car", "Puzzle", "Action Figure", "Dollhouse", "Educational Toy", "Video Game", "Outdoor Play Equipment", "Art Set"],
+      "Beauty & Personal Care": ["Hair Dryer", "Electric Toothbrush", "Skincare Set", "Makeup Kit", "Beard Trimmer", "Nail Polish Set", "Perfume", "Face Mask", "Hair Straightener", "Massage Device"],
+      "Clothing & Accessories": ["Running Shoes", "Smartwatch", "Sunglasses", "Backpack", "Winter Coat", "Dress Shirt", "Yoga Pants", "Leather Wallet", "Scarf", "Hiking Boots"],
+      "Automotive": ["Car Vacuum", "Dash Cam", "Jump Starter", "Car Air Purifier", "Steering Wheel Cover", "Car Phone Mount", "Tire Pressure Gauge", "Car Wax", "Seat Cushion", "Car Organizer"],
+      "Pet Supplies": ["Automatic Pet Feeder", "Dog Bed", "Cat Tree", "Pet Camera", "Grooming Kit", "Interactive Toy", "Pet Carrier", "Aquarium", "Pet GPS Tracker", "Dog Harness"],
+      "Office Products": ["Ergonomic Chair", "Desk Lamp", "Wireless Mouse", "Paper Shredder", "Whiteboard", "Filing Cabinet", "Label Maker", "Desk Organizer", "Printer", "Noise-Cancelling Headphones"],
+      "Garden & Outdoor": ["Lawn Mower", "Patio Furniture Set", "Garden Hose", "Bird Feeder", "Outdoor Grill", "Solar Lights", "Hammock", "Pressure Washer", "Compost Bin", "Garden Tools Set"],
+      "Health & Wellness": ["Fitness Tracker", "Yoga Mat", "Meditation App Subscription", "Air Purifier", "Weighted Blanket", "Foam Roller", "Blood Pressure Monitor", "Essential Oil Diffuser", "Resistance Bands", "Vitamin Supplement"],
+      "Food & Grocery": ["Organic Coffee Beans", "Gourmet Chocolate Box", "Artisanal Cheese Selection", "Exotic Fruit Basket", "Specialty Tea Set", "Gluten-free Snack Pack", "Vegan Protein Powder", "Spice Gift Set", "Olive Oil Sampler", "Craft Beer Variety Pack"],
+      "Music & Instruments": ["Digital Piano", "Acoustic Guitar", "Bluetooth Turntable", "Electronic Drum Set", "MIDI Controller", "Wireless Earbuds", "Karaoke Machine", "Harmonica Set", "Ukulele", "DJ Controller"],
+      "Art & Craft Supplies": ["Acrylic Paint Set", "Drawing Tablet", "Sewing Machine", "Pottery Wheel", "Calligraphy Kit", "Scrapbooking Set", "Jewelry Making Kit", "Woodburning Tool", "Canvas Set", "Knitting Supplies"]
+  }
+  features = [
+      "durability", "user-friendly interface", "long battery life", "compact design", "advanced technology",
+      "energy efficiency", "wireless connectivity", "customizable settings", "ergonomic design", "high-resolution display",
+      "fast charging", "voice control", "AI-powered features", "water resistance", "shock-proof construction",
+      "eco-friendly materials", "noise cancellation", "multi-device compatibility", "augmented reality support", "biometric security",
+      "cloud integration", "gesture control", "modular design", "self-cleaning function", "automatic updates"
+  ]
+  use_cases = ["home", "office", "travel", "outdoor", "fitness",
+               "education", "entertainment", "professional", "creative", "everyday"]
+
+  # Generate random product details
+  category = random.choice(categories)
+  adjective = random.choice(adjectives)
+  product_type = random.choice(products[category])
+
+  name = f"{adjective} {product_type}"
+  description = f"High-quality {category.lower()} product. This {name.lower()} is perfect for {random.choice(use_cases)} use. Features include {', '.join(random.sample(features, 3))}."
+
   random_product = Product(
       productId=f"PROD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
-      name=faker.word(),
-      description=faker.sentence(),
-      price=round(random.uniform(5.0, 100.0), 2),
-      quantity=random.randint(1, 10),
+      name=name,
+      description=description,
+      price=round(random.uniform(5.0, 5000.0), 2),
+      quantity=random.randint(1, 50),
   )
 
   logger.info(f"Product created: {random_product.model_dump_json()}")
