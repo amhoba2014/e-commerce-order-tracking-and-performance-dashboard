@@ -16,23 +16,30 @@ export default function CustomersPage() {
   const [page, setPage] = useState(1); // Track the current page
   const [totalPages, setTotalPages] = useState(1); // Track the total number of pages
 
-  // Fetch customers whenever the page changes
+  const fetchCustomers = async () => {
+    try {
+      const response = await sdk.defaultReadCustomers({ query: { page, size: page_size } });
+      setCustomers(response.data ?? null);
+
+      // Set the total number of pages based on the total count returned from the backend
+      setTotalPages(response.data ? Math.ceil(response.data.total / page_size) : 1); // Assuming the backend returns total count
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      setCustomers(null); // Default to an empty array if fetch fails
+    }
+  };
+
+  // useEffect to fetch customers on page change and every 5 seconds
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await sdk.defaultReadCustomers({ query: { page, size: page_size } });
-        setCustomers(response.data ?? null);
-
-        // Set the total number of pages based on the total count returned from the backend
-        setTotalPages(response.data ? Math.ceil(response.data.total / page_size) : 1); // Assuming the backend returns total count
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-        setCustomers(null); // Default to an empty array if fetch fails
-      }
-    };
-
+    // Fetch customers immediately when page changes
     fetchCustomers();
-  }, [page]);
+
+    // Set up interval to fetch customers every 5 seconds
+    const intervalId = setInterval(fetchCustomers, 5000);
+
+    // Clear interval on component unmount or when page changes
+    return () => clearInterval(intervalId);
+  }, [page]); // Dependency array includes 'page'
 
   // Handle page change
   const handlePageChange = (event, value) => {

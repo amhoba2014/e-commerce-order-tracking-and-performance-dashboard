@@ -16,23 +16,30 @@ export default function ProductsPage() {
   const [page, setPage] = useState(1); // Track the current page
   const [totalPages, setTotalPages] = useState(1); // Track the total number of pages
 
-  // Fetch products whenever the page changes
+  const fetchProducts = async () => {
+    try {
+      const response = await sdk.defaultReadProducts({ query: { page, size: page_size } });
+      setProducts(response.data ?? null);
+
+      // Set the total number of pages based on the total count returned from the backend
+      setTotalPages(response.data ? Math.ceil(response.data.total / page_size) : 1); // Assuming the backend returns total count
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setProducts(null); // Default to an empty array if fetch fails
+    }
+  };
+
+  // useEffect to fetch products on page change and every 5 seconds
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await sdk.defaultReadProducts({ query: { page, size: page_size } });
-        setProducts(response.data ?? null);
-
-        // Set the total number of pages based on the total count returned from the backend
-        setTotalPages(response.data ? Math.ceil(response.data.total / page_size) : 1); // Assuming the backend returns total count
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts(null); // Default to an empty array if fetch fails
-      }
-    };
-
+    // Fetch products immediately when page changes
     fetchProducts();
-  }, [page]);
+
+    // Set up interval to fetch products every 5 seconds
+    const intervalId = setInterval(fetchProducts, 5000);
+
+    // Clear interval on component unmount or when page changes
+    return () => clearInterval(intervalId);
+  }, [page]); // Dependency array includes 'page'
 
   // Handle page change
   const handlePageChange = (event, value) => {
