@@ -11,6 +11,10 @@ export type Customer = {
     deleted?: boolean;
 };
 
+export type HTTPValidationError = {
+    detail?: Array<ValidationError>;
+};
+
 export type Order = {
     id: string;
     productId: string;
@@ -25,6 +29,13 @@ export type Order = {
 
 export type OrderStatus = 'Pending' | 'Shipped' | 'Delivered';
 
+export type PaginatedOrdersResponse = {
+    total: number;
+    page: number;
+    size: number;
+    results: Array<Order>;
+};
+
 export type PaymentStatus = 'Paid' | 'Pending' | 'Failed';
 
 export type Product = {
@@ -38,21 +49,48 @@ export type Product = {
     deleted?: boolean;
 };
 
+export type ValidationError = {
+    loc: Array<(string | number)>;
+    msg: string;
+    type: string;
+};
+
 export type DefaultHealthCheckResponse = (unknown);
 
 export type DefaultHealthCheckError = unknown;
 
-export type DefaultReadOrdersResponse = (Array<Order>);
+export type DefaultReadOrdersData = {
+    query?: {
+        page?: number;
+        size?: number;
+    };
+};
 
-export type DefaultReadOrdersError = unknown;
+export type DefaultReadOrdersResponse = (PaginatedOrdersResponse);
+
+export type DefaultReadOrdersError = (HTTPValidationError);
+
+export type DefaultReadProductsData = {
+    query?: {
+        page?: number;
+        page_size?: number;
+    };
+};
 
 export type DefaultReadProductsResponse = (Array<Product>);
 
-export type DefaultReadProductsError = unknown;
+export type DefaultReadProductsError = (HTTPValidationError);
+
+export type DefaultReadCustomersData = {
+    query?: {
+        page?: number;
+        page_size?: number;
+    };
+};
 
 export type DefaultReadCustomersResponse = (Array<Customer>);
 
-export type DefaultReadCustomersError = unknown;
+export type DefaultReadCustomersError = (HTTPValidationError);
 
 export type DefaultAddRandomOrderResponse = (Order);
 

@@ -1,35 +1,39 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip, CircularProgress } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip, CircularProgress, Pagination } from '@mui/material';
 import * as sdk from '@/sdk/sdk.gen';
-import { Order } from '@/sdk/types.gen';
+import { Order, PaginatedOrdersResponse } from '@/sdk/types.gen';
 
 sdk.client.setConfig({
   baseUrl: "/api"
 });
 
 export default function Page() {
-  const [orders, setOrders] = useState<Order[] | null>(null);
+  const [orders, setOrders] = useState<PaginatedOrdersResponse | null>(null);
+  const [page, setPage] = useState(1); // Track the current page
+  const [totalPages, setTotalPages] = useState(1); // Track the total number of pages
 
-  // Hook to fetch orders every 2 seconds
+  // Fetch orders whenever the page changes
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchOrders = async () => {
       try {
-        const response = await sdk.defaultReadOrders();
-        setOrders(response.data ?? []);
+        const response = await sdk.defaultReadOrders({ query: { page, size: 10 } });
+        setOrders(response.data ?? null);
+
+        // Set the total number of pages based on the total count returned from the backend
+        setTotalPages(Math.ceil(response.data?.total ?? 10 / 10)); // Assuming the backend returns total count
       } catch (error) {
         console.error('Error fetching orders:', error);
-        setOrders([]); // Default to an empty array if fetch fails
+        setOrders(null); // Default to an empty array if fetch fails
       }
-    }, 2000);
+    };
 
-    // Cleanup the interval when the component unmounts
-    return () => clearInterval(interval);
-  }, []);
+    fetchOrders();
+  }, [page]);
 
   // Function to map status to badge color
-  const getStatusBadgeColor = (status) => {
+  const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'Pending':
         return 'warning'; // yellow badge
@@ -43,7 +47,7 @@ export default function Page() {
   };
 
   // Function to map payment status to badge color
-  const getPaymentStatusBadgeColor = (paymentStatus) => {
+  const getPaymentStatusBadgeColor = (paymentStatus: string) => {
     switch (paymentStatus) {
       case 'Paid':
         return 'success'; // green badge
@@ -54,6 +58,11 @@ export default function Page() {
       default:
         return 'default'; // gray badge
     }
+  };
+
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
   return (
@@ -83,14 +92,14 @@ export default function Page() {
               </TableRow>
             ) : (
               // Render orders once data is available
-              orders.map((order) => (
+              orders.results.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>{order.id}</TableCell>
                   <TableCell>{order.customerId}</TableCell>
                   <TableCell>
                     <Chip
                       label={order.status}
-                      color={getStatusBadgeColor(order.status)}
+                      color={getStatusBadgeColor(order.status ?? "")}
                       size="small"
                     />
                   </TableCell>
@@ -99,7 +108,7 @@ export default function Page() {
                   <TableCell>
                     <Chip
                       label={order.paymentStatus}
-                      color={getPaymentStatusBadgeColor(order.paymentStatus)}
+                      color={getPaymentStatusBadgeColor(order.paymentStatus ?? "")}
                       size="small"
                     />
                   </TableCell>
@@ -115,6 +124,17 @@ export default function Page() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination Controls */}
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <Pagination
+          count={Math.ceil(totalPages / 10)}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+          siblingCount={1}
+        />
+      </div>
     </div>
   );
 }

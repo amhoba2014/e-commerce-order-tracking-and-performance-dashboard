@@ -1,17 +1,21 @@
 import asyncio
 from typing import List
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import func
 from faker import Faker
 import random
 from loguru import logger
 from datetime import datetime, timezone
+from source.dependencies import get_pagination_params
 from source.makefake import spin_up_fakers
 from source.models import Order, Customer, Product
 from source.database import create_db_and_tables, get_db
 from source.enums import OrderStatus, PaymentStatus
 from source.openapi import make_custom_openapi
+from source.schemas import PaginatedOrdersResponse
+from source.utils import paginate
 
 app = FastAPI()
 
@@ -32,23 +36,55 @@ async def health_check():
   return {"status": "healthy"}
 
 
-@app.get("/orders/", response_model=List[Order])
-async def read_orders(db: AsyncSession = Depends(get_db)):
-  result = await db.execute(select(Order))
+@app.get("/orders", response_model=PaginatedOrdersResponse)
+async def read_orders(
+    pagination: dict = Depends(get_pagination_params),
+    db: AsyncSession = Depends(get_db)
+):
+  page = pagination["page"]
+  size = pagination["size"]
+  offset = (page - 1) * size
+  limit = size
+
+  # Query to get the total count of orders
+  total_count_result = await db.execute(select(func.count(Order.id)))
+  total_count = total_count_result.scalar()
+
+  # Query to get the paginated orders
+  orders_query = select(Order).offset(offset).limit(limit)
+  result = await db.execute(orders_query)
   orders = result.scalars().all()
-  return orders
+
+  return PaginatedOrdersResponse(
+      total=total_count,
+      page=page,
+      size=size,
+      results=orders
+  )
 
 
 @app.get("/products/", response_model=List[Product])
-async def read_products(db: AsyncSession = Depends(get_db)):
-  result = await db.execute(select(Product))
+async def read_products(
+    db: AsyncSession = Depends(get_db),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100)
+):
+  query = select(Product)
+  paginated_query = paginate(query, page, page_size)
+  result = await db.execute(paginated_query)
   products = result.scalars().all()
   return products
 
 
 @app.get("/customers/", response_model=List[Customer])
-async def read_customers(db: AsyncSession = Depends(get_db)):
-  result = await db.execute(select(Customer))
+async def read_customers(
+    db: AsyncSession = Depends(get_db),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100)
+):
+  query = select(Customer)
+  paginated_query = paginate(query, page, page_size)
+  result = await db.execute(paginated_query)
   customers = result.scalars().all()
   return customers
 
