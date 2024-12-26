@@ -206,15 +206,15 @@ async def restock_products(db: AsyncSession = Depends(get_db)):
 
 @app.post("/orders/update_status")
 async def update_random_order_status(db: AsyncSession = Depends(get_db)):
-  result = await db.execute(select(Order))
-  orders = result.scalars().all()
+  result = await db.execute(select(Order).filter(Order.paymentStatus == PaymentStatus.Paid))
+  paid_orders = result.scalars().all()
 
-  if not orders:
+  if not paid_orders:
     raise HTTPException(
-        status_code=404, detail="No orders available to update.")
+        status_code=404, detail="No paid orders available to update.")
 
-  # Select a random order
-  random_order = random.choice(orders)
+  # Select a random paid order
+  random_order = random.choice(paid_orders)
 
   try:
     current_index = list(OrderStatus).index(random_order.status)
@@ -240,22 +240,28 @@ async def update_random_order_status(db: AsyncSession = Depends(get_db)):
 
 @app.post("/orders/update_payment_status")
 async def update_payment_status(db: AsyncSession = Depends(get_db)):
-    # Fetch all orders with PaymentStatus.Pending
-  result = await db.execute(select(Order).where(Order.paymentStatus == PaymentStatus.Pending))
-  pending_orders = result.scalars().all()
+  # Fetch all orders with PaymentStatus.Pending or PaymentStatus.Failed
+  result = await db.execute(
+      select(Order).where(
+          (Order.paymentStatus == PaymentStatus.Pending) |
+          (Order.paymentStatus == PaymentStatus.Failed)
+      )
+  )
+  updateable_orders = result.scalars().all()
 
-  if not pending_orders:
-    logger.info("No pending orders found.")
-    return {"message": "No pending orders to update."}
+  if not updateable_orders:
+    logger.info("No orders with pending or failed payment status found.")
+    return {"message": "No orders to update."}
 
-  # Randomly select one order from the pending orders
-  order = random.choice(pending_orders)
+  # Randomly select one order from the updateable orders
+  order = random.choice(updateable_orders)
 
   # Randomly set to Paid or Failed
   order.paymentStatus = random.choice(
       [PaymentStatus.Paid, PaymentStatus.Failed])
+
   order.updated = datetime.now(timezone.utc)
   logger.info(f"Payment status updated: {order.model_dump_json()}")
 
   await db.commit()
-  return {"message": f"Payment status updated for order: {order.id}"}
+  return {"message": f"Payment status updated for order: {order.id}. New status: {order.paymentStatus}"}

@@ -80,4 +80,4 @@ async def update_order_payment_status():
       except Exception as e:
         logger.error(f"Error updating payment status: {e}")
       # Check and update payment statuses every 30 seconds
-      await asyncio.sleep(30)
+      await asyncio.sleep(random.randint(120, 240))
