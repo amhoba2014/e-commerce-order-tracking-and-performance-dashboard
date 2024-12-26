@@ -7,7 +7,7 @@ from source.enums import OrderStatus, PaymentStatus
 
 
 class Product(SQLModel, table=True):
-  productId: str = Field(primary_key=True)
+  id: str = Field(primary_key=True)
   name: str
   description: str
   price: float
@@ -20,11 +20,12 @@ class Product(SQLModel, table=True):
                        server_default=func.now(), onupdate=func.now())
   )
   deleted: bool = False
+  ##################################################
   orders: List["Order"] = Relationship(back_populates="product")
 
 
 class Customer(SQLModel, table=True):
-  customerId: str = Field(primary_key=True)
+  id: str = Field(primary_key=True)
   name: str
   email: str
   password: str
@@ -37,13 +38,14 @@ class Customer(SQLModel, table=True):
                        server_default=func.now(), onupdate=func.now())
   )
   deleted: bool = False
+  ##################################################
   orders: List["Order"] = Relationship(back_populates="customer")
 
 
 class Order(SQLModel, table=True):
-  orderId: str = Field(primary_key=True)
-  productId: str = Field(foreign_key="product.productId")
-  customerId: str = Field(foreign_key="customer.customerId")
+  id: str = Field(primary_key=True)
+  productId: str = Field(foreign_key="product.id")
+  customerId: str = Field(foreign_key="customer.id")
   status: OrderStatus = OrderStatus.Pending
   quantity: float
   paymentStatus: PaymentStatus = PaymentStatus.Pending
@@ -55,5 +57,6 @@ class Order(SQLModel, table=True):
                        server_default=func.now(), onupdate=func.now())
   )
   deleted: bool = False
+  ##################################################
   product: Product = Relationship(back_populates="orders")
   customer: Customer = Relationship(back_populates="orders")

@@ -69,9 +69,9 @@ async def add_random_order(db: AsyncSession = Depends(get_db)):
 
   # Create the order
   random_order = Order(
-      orderId=f"ORD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
-      productId=random_product.productId,
-      customerId=random_customer.customerId,
+      id=f"ORD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
+      productId=random_product.id,
+      customerId=random_customer.id,
       status=OrderStatus.Pending,
       quantity=1,
       paymentStatus=PaymentStatus.Pending,
@@ -93,7 +93,7 @@ async def add_random_order(db: AsyncSession = Depends(get_db)):
 @app.post("/customers/random", response_model=Customer)
 async def add_random_customer(db: AsyncSession = Depends(get_db)):
   random_customer = Customer(
-      customerId=f"CUST{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
+      id=f"CUST{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
       name=faker.name(),
       email=faker.email(),
       password=faker.password(),
@@ -161,7 +161,7 @@ async def add_random_product(db: AsyncSession = Depends(get_db)):
   description = f"High-quality {category.lower()} product. This {name.lower()} is perfect for {random.choice(use_cases)} use. Features include {', '.join(random.sample(features, 3))}."
 
   random_product = Product(
-      productId=f"PROD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
+      id=f"PROD{datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]}",
       name=name,
       description=description,
       price=round(random.uniform(5.0, 5000.0), 2),
@@ -193,7 +193,7 @@ async def restock_products(db: AsyncSession = Depends(get_db)):
     product.quantity += random_quantity
     restocked_products.append(product)
     logger.info(
-        f"Product restocked: {product.productId} with quantity {random_quantity}")
+        f"Product restocked: {product.id} with quantity {random_quantity}")
 
   await db.commit()
 
@@ -229,13 +229,13 @@ async def update_random_order_status(db: AsyncSession = Depends(get_db)):
   except ValueError:
     raise HTTPException(
         status_code=500,
-        detail=f"Invalid order status for order ID {random_order.orderId}")
+        detail=f"Invalid order status for order ID {random_order.id}")
 
   # Update the database
   await db.commit()
   await db.refresh(random_order)
 
-  return {"message": f"Order ID {random_order.orderId} status updated to {random_order.status}"}
+  return {"message": f"Order ID {random_order.id} status updated to {random_order.status}"}
 
 
 @app.post("/orders/update_payment_status")
@@ -258,4 +258,4 @@ async def update_payment_status(db: AsyncSession = Depends(get_db)):
   logger.info(f"Payment status updated: {order.model_dump_json()}")
 
   await db.commit()
-  return {"message": f"Payment status updated for order: {order.orderId}"}
+  return {"message": f"Payment status updated for order: {order.id}"}
