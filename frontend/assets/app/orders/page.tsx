@@ -63,12 +63,12 @@ export default function Page() {
           <TableHead>
             <TableRow>
               <TableCell>Order ID</TableCell>
-              <TableCell>Customer Name</TableCell>
+              <TableCell>Customer ID</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Timestamp</TableCell>
-              <TableCell>Order Amount</TableCell>
+              <TableCell>Created</TableCell>
+              <TableCell>Quantity</TableCell>
               <TableCell>Payment Status</TableCell>
-              <TableCell>Shipping Address</TableCell>
+              <TableCell>Product ID</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -84,9 +84,9 @@ export default function Page() {
             ) : (
               // Render orders once data is available
               orders.map((order) => (
-                <TableRow key={order.orderId}>
-                  <TableCell>{order.orderId}</TableCell>
-                  <TableCell>{order.customerName}</TableCell>
+                <TableRow key={order.id}>
+                  <TableCell>{order.id}</TableCell>
+                  <TableCell>{order.customerId}</TableCell>
                   <TableCell>
                     <Chip
                       label={order.status}
@@ -94,8 +94,8 @@ export default function Page() {
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{order.timestamp}</TableCell>
-                  <TableCell>{order.amount}</TableCell>
+                  <TableCell>{order.created}</TableCell>
+                  <TableCell>{order.quantity}</TableCell>
                   <TableCell>
                     <Chip
                       label={order.paymentStatus}
@@ -103,7 +103,7 @@ export default function Page() {
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{order.shippingAddress}</TableCell>
+                  <TableCell>{order.productId}</TableCell>
                   <TableCell>
                     <Button variant="contained" color="primary">
                       View Details
