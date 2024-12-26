@@ -39,6 +39,20 @@ async def read_orders(db: AsyncSession = Depends(get_db)):
   return orders
 
 
+@app.get("/products/", response_model=List[Product])
+async def read_products(db: AsyncSession = Depends(get_db)):
+  result = await db.execute(select(Product))
+  products = result.scalars().all()
+  return products
+
+
+@app.get("/customers/", response_model=List[Customer])
+async def read_customers(db: AsyncSession = Depends(get_db)):
+  result = await db.execute(select(Customer))
+  customers = result.scalars().all()
+  return customers
+
+
 @app.post("/orders/random", response_model=Order)
 async def add_random_order(db: AsyncSession = Depends(get_db)):
   # Check if products exist

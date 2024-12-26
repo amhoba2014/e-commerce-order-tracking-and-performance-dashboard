@@ -46,6 +46,14 @@ export type DefaultReadOrdersResponse = (Array<Order>);
 
 export type DefaultReadOrdersError = unknown;
 
+export type DefaultReadProductsResponse = (Array<Product>);
+
+export type DefaultReadProductsError = unknown;
+
+export type DefaultReadCustomersResponse = (Array<Customer>);
+
+export type DefaultReadCustomersError = unknown;
+
 export type DefaultAddRandomOrderResponse = (Order);
 
 export type DefaultAddRandomOrderError = unknown;
