@@ -15,7 +15,6 @@ from source.database import create_db_and_tables, get_db
 from source.enums import OrderStatus, PaymentStatus
 from source.openapi import make_custom_openapi
 from source.schemas import PaginatedCustomersResponse, PaginatedOrdersResponse, PaginatedProductsResponse
-from source.utils import paginate
 
 app = FastAPI()
 
