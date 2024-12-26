@@ -24,7 +24,7 @@ async def create_random_orders():
         logger.info(f"Random order created: {response.json()}")
       except Exception as e:
         logger.error(f"Error creating random order: {e}")
-      await asyncio.sleep(10)
+      await asyncio.sleep(random.randint(10, 30))
 
 
 async def create_random_customers():
@@ -35,7 +35,7 @@ async def create_random_customers():
         logger.info(f"Random customer created: {response.json()}")
       except Exception as e:
         logger.error(f"Error creating random customer: {e}")
-      await asyncio.sleep(120)
+      await asyncio.sleep(random.randint(10, 30))
 
 
 async def create_random_products():
@@ -46,7 +46,7 @@ async def create_random_products():
         logger.info(f"Random product created: {response.json()}")
       except Exception as e:
         logger.error(f"Error creating random product: {e}")
-      await asyncio.sleep(180)
+      await asyncio.sleep(random.randint(10, 30))
 
 
 async def restock_random_products():
@@ -57,7 +57,7 @@ async def restock_random_products():
         logger.info(f"Random product restocked: {response.json()}")
       except Exception as e:
         logger.error(f"Error restocking product: {e}")
-      await asyncio.sleep(60)
+      await asyncio.sleep(random.randint(10, 30))
 
 
 async def update_order_statuses():
@@ -68,7 +68,7 @@ async def update_order_statuses():
         logger.info(f"Order statuses updated: {response.json()}")
       except Exception as e:
         logger.error(f"Error updating order statuses: {e}")
-      await asyncio.sleep(random.randint(120, 240))
+      await asyncio.sleep(random.randint(10, 30))
 
 
 async def update_order_payment_status():
@@ -80,4 +80,4 @@ async def update_order_payment_status():
       except Exception as e:
         logger.error(f"Error updating payment status: {e}")
       # Check and update payment statuses every 30 seconds
-      await asyncio.sleep(random.randint(120, 240))
+      await asyncio.sleep(random.randint(10, 30))
