@@ -1,33 +1,41 @@
-// app/products.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip, CircularProgress } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, CircularProgress, Pagination } from '@mui/material';
 import * as sdk from '@/sdk/sdk.gen';
-import { Product } from '@/sdk/types.gen';
+import { Product, PaginatedProductsResponse } from '@/sdk/types.gen';
 
 sdk.client.setConfig({
   baseUrl: "/api"
 });
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<PaginatedProductsResponse | null>(null);
+  const [page, setPage] = useState(1); // Track the current page
+  const [totalPages, setTotalPages] = useState(1); // Track the total number of pages
 
-  // Hook to fetch products every 2 seconds
+  // Fetch products whenever the page changes
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchProducts = async () => {
       try {
-        const response = await sdk.defaultReadProducts();
-        setProducts(response.data ?? []);
+        const response = await sdk.defaultReadProducts({ query: { page, size: 10 } });
+        setProducts(response.data ?? null);
+
+        // Set the total number of pages based on the total count returned from the backend
+        setTotalPages(Math.ceil(response.data?.total ?? 10 / 10)); // Assuming the backend returns total count
       } catch (error) {
         console.error('Error fetching products:', error);
-        setProducts([]); // Default to an empty array if fetch fails
+        setProducts(null); // Default to an empty array if fetch fails
       }
-    }, 2000);
+    };
 
-    // Cleanup the interval when the component unmounts
-    return () => clearInterval(interval);
-  }, []);
+    fetchProducts();
+  }, [page]);
+
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
   return (
     <div style={{ padding: '20px' }}>
@@ -54,7 +62,7 @@ export default function ProductsPage() {
               </TableRow>
             ) : (
               // Render products once data is available
-              products.map((product) => (
+              products.results.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.name}</TableCell>
@@ -72,6 +80,17 @@ export default function ProductsPage() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination Controls */}
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+          siblingCount={1}
+        />
+      </div>
     </div>
   );
 }

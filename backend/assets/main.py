@@ -14,7 +14,7 @@ from source.models import Order, Customer, Product
 from source.database import create_db_and_tables, get_db
 from source.enums import OrderStatus, PaymentStatus
 from source.openapi import make_custom_openapi
-from source.schemas import PaginatedOrdersResponse
+from source.schemas import PaginatedCustomersResponse, PaginatedOrdersResponse, PaginatedProductsResponse
 from source.utils import paginate
 
 app = FastAPI()
@@ -63,30 +63,58 @@ async def read_orders(
   )
 
 
-@app.get("/products/", response_model=List[Product])
+@app.get("/products/", response_model=PaginatedProductsResponse)
 async def read_products(
-    db: AsyncSession = Depends(get_db),
-    page: int = Query(1, ge=1),
-    page_size: int = Query(10, ge=1, le=100)
+    pagination: dict = Depends(get_pagination_params),
+    db: AsyncSession = Depends(get_db)
 ):
-  query = select(Product)
-  paginated_query = paginate(query, page, page_size)
-  result = await db.execute(paginated_query)
+  page = pagination["page"]
+  size = pagination["size"]
+  offset = (page - 1) * size
+  limit = size
+
+  # Query to get the total count of products
+  total_count_result = await db.execute(select(func.count(Product.id)))
+  total_count = total_count_result.scalar()
+
+  # Query to get the paginated products
+  products_query = select(Product).offset(offset).limit(limit)
+  result = await db.execute(products_query)
   products = result.scalars().all()
-  return products
+
+  return PaginatedProductsResponse(
+      total=total_count,
+      page=page,
+      size=size,
+      results=products
+  )
 
 
-@app.get("/customers/", response_model=List[Customer])
+@app.get("/customers/", response_model=PaginatedCustomersResponse)
 async def read_customers(
-    db: AsyncSession = Depends(get_db),
-    page: int = Query(1, ge=1),
-    page_size: int = Query(10, ge=1, le=100)
+    pagination: dict = Depends(get_pagination_params),
+    db: AsyncSession = Depends(get_db)
 ):
-  query = select(Customer)
-  paginated_query = paginate(query, page, page_size)
-  result = await db.execute(paginated_query)
+  page = pagination["page"]
+  size = pagination["size"]
+  offset = (page - 1) * size
+  limit = size
+
+  # Query to get the total count of customers
+  total_count_result = await db.execute(select(func.count(Customer.id)))
+  total_count = total_count_result.scalar()
+
+  # Query to get the paginated customers
+  customers_query = select(Customer).offset(offset).limit(limit)
+  result = await db.execute(customers_query)
   customers = result.scalars().all()
-  return customers
+
+  return PaginatedCustomersResponse(
+      total=total_count,
+      page=page,
+      size=size,
+      results=customers
+  )
 
 
 @app.post("/orders/random", response_model=Order)

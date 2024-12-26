@@ -1,33 +1,41 @@
-// app/customers.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, CircularProgress } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, CircularProgress, Pagination } from '@mui/material';
 import * as sdk from '@/sdk/sdk.gen';
-import { Customer } from '@/sdk/types.gen';
+import { Customer, PaginatedCustomersResponse } from '@/sdk/types.gen';
 
 sdk.client.setConfig({
   baseUrl: "/api"
 });
 
 export default function CustomersPage() {
-  const [customers, setCustomers] = useState<Customer[] | null>(null);
+  const [customers, setCustomers] = useState<PaginatedCustomersResponse | null>(null);
+  const [page, setPage] = useState(1); // Track the current page
+  const [totalPages, setTotalPages] = useState(1); // Track the total number of pages
 
-  // Hook to fetch customers every 2 seconds
+  // Fetch customers whenever the page changes
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchCustomers = async () => {
       try {
-        const response = await sdk.defaultReadCustomers();
-        setCustomers(response.data ?? []);
+        const response = await sdk.defaultReadCustomers({ query: { page, size: 10 } });
+        setCustomers(response.data ?? null);
+
+        // Set the total number of pages based on the total count returned from the backend
+        setTotalPages(Math.ceil(response.data?.total ?? 10 / 10)); // Assuming the backend returns total count
       } catch (error) {
         console.error('Error fetching customers:', error);
-        setCustomers([]); // Default to an empty array if fetch fails
+        setCustomers(null); // Default to an empty array if fetch fails
       }
-    }, 2000);
+    };
 
-    // Cleanup the interval when the component unmounts
-    return () => clearInterval(interval);
-  }, []);
+    fetchCustomers();
+  }, [page]);
+
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
   return (
     <div style={{ padding: '20px' }}>
@@ -53,7 +61,7 @@ export default function CustomersPage() {
               </TableRow>
             ) : (
               // Render customers once data is available
-              customers.map((customer) => (
+              customers.results.map((customer) => (
                 <TableRow key={customer.id}>
                   <TableCell>{customer.id}</TableCell>
                   <TableCell>{customer.name}</TableCell>
@@ -70,6 +78,17 @@ export default function CustomersPage() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination Controls */}
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+          siblingCount={1}
+        />
+      </div>
     </div>
   );
 }

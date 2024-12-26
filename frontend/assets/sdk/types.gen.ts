@@ -29,11 +29,25 @@ export type Order = {
 
 export type OrderStatus = 'Pending' | 'Shipped' | 'Delivered';
 
+export type PaginatedCustomersResponse = {
+    total: number;
+    page: number;
+    size: number;
+    results: Array<Customer>;
+};
+
 export type PaginatedOrdersResponse = {
     total: number;
     page: number;
     size: number;
     results: Array<Order>;
+};
+
+export type PaginatedProductsResponse = {
+    total: number;
+    page: number;
+    size: number;
+    results: Array<Product>;
 };
 
 export type PaymentStatus = 'Paid' | 'Pending' | 'Failed';
@@ -73,22 +87,22 @@ export type DefaultReadOrdersError = (HTTPValidationError);
 export type DefaultReadProductsData = {
     query?: {
         page?: number;
-        page_size?: number;
+        size?: number;
     };
 };
 
-export type DefaultReadProductsResponse = (Array<Product>);
+export type DefaultReadProductsResponse = (PaginatedProductsResponse);
 
 export type DefaultReadProductsError = (HTTPValidationError);
 
 export type DefaultReadCustomersData = {
     query?: {
         page?: number;
-        page_size?: number;
+        size?: number;
     };
 };
 
-export type DefaultReadCustomersResponse = (Array<Customer>);
+export type DefaultReadCustomersResponse = (PaginatedCustomersResponse);
 
 export type DefaultReadCustomersError = (HTTPValidationError);
 
