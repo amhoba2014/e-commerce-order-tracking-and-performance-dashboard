@@ -33,6 +33,19 @@ def setup_typer_app(base_command: str):
 
 
     @app.command()
+    def eliminate():
+        confirmation = typer.confirm("Are you sure you want to eliminate everything?")
+        if confirmation:
+            try:
+                os.system(f"{base_command} down -v")
+                typer.echo("Everything has been eliminated successfully.")
+            except Exception as e:
+                typer.echo(f"Failed to eliminate everything. Error: {str(e)}")
+        else:
+            typer.echo("Operation cancelled.")
+
+
+    @app.command()
     def rm_volume(
         name: str = typer.Option(
             None,
