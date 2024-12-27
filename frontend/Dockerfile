@@ -20,7 +20,8 @@ EXPOSE 3000
 WORKDIR /assets
 CMD ["bash", "-li", "entrypoint.sh"]
 
-HEALTHCHECK --interval=10s CMD nc -w 1 -z -v 0.0.0.0 3000 || exit 1
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/api/health || exit 1
 
 #
 #

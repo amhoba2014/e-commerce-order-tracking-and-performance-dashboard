@@ -159,7 +159,7 @@ services:
   gateway:
     restart: always
     # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker --providers.docker.exposedbydefault=false --log
+    command: --api.insecure=true --providers.docker --providers.docker.exposedbydefault=false --log --ping=true
     ports:
       # The HTTP (AND S) port
       - "80:80"
@@ -174,7 +174,6 @@ services:
     build:
       context: ../gateway
       target: dev
-  
 
 volumes:
   database_pgdata:
